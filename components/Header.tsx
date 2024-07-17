@@ -107,7 +107,13 @@ const Header: React.FC<HeaderProps> = ({
                 </Button>
               </div>
               <div>
-                <Button onClick={() => {}} className="bg-white px-6 py-2">
+                <Button
+                  onClick={() => {
+                    console.log("click");
+                    authModal.onOpen();
+                  }}
+                  className="bg-white px-6 py-2"
+                >
                   Login In
                 </Button>
               </div>
