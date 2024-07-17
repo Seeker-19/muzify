@@ -1,4 +1,4 @@
-import { Subscription, UserDetails } from "@/types";
+import { UserDetails } from "@/types";
 import { User } from "@supabase/auth-helpers-nextjs";
 import {
   useSessionContext,
@@ -12,7 +12,6 @@ type UserContextType = {
   user: User | null;
   userDetails: UserDetails | null;
   isLoading: boolean;
-  subscription: Subscription | null;
 };
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -35,7 +34,6 @@ export const MyUserContextProvider: React.FC<Props> = ({ children }) => {
   const accessToken = session?.access_token || null;
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   const getUserDetails = () => supabase.from("users").select("*").single();
 
@@ -47,7 +45,7 @@ export const MyUserContextProvider: React.FC<Props> = ({ children }) => {
       .single();
 
   useEffect(() => {
-    if (user && !isLoadingData && !userDetails && !subscription) {
+    if (user && !isLoadingData && !userDetails) {
       setIsLoadingData(true);
 
       Promise.allSettled([getUserDetails(), getSubscription()]).then(
@@ -58,16 +56,12 @@ export const MyUserContextProvider: React.FC<Props> = ({ children }) => {
           if (userDetailsPromise.status === "fulfilled") {
             setUserDetails(userDetailsPromise.value.data as UserDetails);
           }
-          if (userSubscriptionPromise.status === "fulfilled") {
-            setSubscription(userSubscriptionPromise.value.data as Subscription);
-          }
 
           setIsLoadingData(false);
         }
       );
     } else if (!user && !isLoadingData && !isLoadingUser) {
       setUserDetails(null);
-      setSubscription(null);
     }
   }, [user, isLoadingUser]);
 
@@ -76,7 +70,6 @@ export const MyUserContextProvider: React.FC<Props> = ({ children }) => {
     user,
     userDetails,
     isLoading: isLoadingUser || isLoadingData,
-    subscription,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
