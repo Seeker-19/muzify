@@ -32,6 +32,7 @@ const Library: React.FC<LibraryProps> = ({ songs }) => {
           <TbPlaylist size={26} className="text-neutral-400" />
           <p className="text-neutral-500 font-medium text-xl">Your Library</p>
         </div>
+
         <AiOutlinePlus
           size={20}
           onClick={onClick}
